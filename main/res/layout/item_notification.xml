@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/material_color_white"
+              android:elevation="8dp"
+              android:orientation="vertical"
+              android:padding="@dimen/material_baseline_grid_1x">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/material_color_white"
+        android:orientation="horizontal"
+        android:padding="@dimen/material_baseline_grid_1x">
+
+        <ImageView
+            android:id="@+id/display_picture"
+            android:layout_width="@dimen/material_baseline_grid_8x"
+            android:layout_height="@dimen/material_baseline_grid_8x"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name"
+                style="@style/MaterialTypography.Tall.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="John Doe"/>
+
+            <TextView
+                android:id="@+id/contact_number"
+                style="@style/MaterialTypography.Locale.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                tools:text="09123456789"/>
+
+            <TextView
+                android:id="@+id/email"
+                style="@style/MaterialTypography.Locale.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                tools:text="john.doe@gmail.com"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/likeBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_heart"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginLeft="64dp">
+    </android.support.v7.widget.RecyclerView>
+</LinearLayout>

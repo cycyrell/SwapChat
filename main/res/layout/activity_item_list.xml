@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:fitsSystemWindows="true"
+  tools:context="xyz.teamcatalyst.breedr.lovematch.ItemListActivity">
+
+  <android.support.design.widget.AppBarLayout
+    android:id="@+id/app_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:theme="@style/AppTheme.AppBarOverlay">
+
+    <android.support.v7.widget.Toolbar
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+  </android.support.design.widget.AppBarLayout>
+
+  <LinearLayout
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?colorPrimary"
+      android:orientation="vertical"
+      android:padding="@dimen/material_baseline_grid_0.5x">
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+          style="@style/TextAppearance.AppCompat.Medium"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="Gender"
+          android:textColor="@color/md_white_1000" />
+
+        <View
+          android:layout_width="1dp"
+          android:layout_height="match_parent"
+          android:layout_marginLeft="4dp"
+          android:layout_marginRight="4dp"
+          android:textColor="@color/md_white_1000" />
+
+        <TextView
+          style="@style/TextAppearance.AppCompat.Medium"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="2"
+          android:text="Max Age"
+          android:textColor="@color/md_white_1000" />
+      </LinearLayout>
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:background="@color/material_color_white"
+        android:orientation="horizontal">
+
+        <Spinner
+          android:id="@+id/filter_gender"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:entries="@array/spinner_gender" />
+
+        <View
+          android:layout_width="1dp"
+          android:layout_height="match_parent"
+          android:layout_marginLeft="4dp"
+          android:layout_marginRight="4dp"
+          android:textColor="@color/md_white_1000" />
+
+        <Spinner
+          android:id="@+id/filter_age_number"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="0.8"
+          android:entries="@array/spinner_age_number"
+          android:textColor="@color/md_white_1000">
+
+        </Spinner>
+
+        <Spinner
+          android:id="@+id/filter_age_unit"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1.2"
+          android:entries="@array/spinner_age"></Spinner>
+      </LinearLayout>
+
+      <Spinner
+        android:id="@+id/filter_breed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/material_color_white"
+        android:entries="@array/spinner_breed_2" />
+
+      <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:textColor="@color/md_white_1000" />
+
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+          style="@style/TextAppearance.AppCompat.Medium"
+          android:layout_width="wrap_content"
+          android:layout_height="32dp"
+          android:gravity="center"
+          android:text="@string/distance"
+          android:textColor="@color/material_color_white" />
+
+        <SeekBar
+          android:id="@+id/seek_distance"
+          android:layout_width="0dp"
+          android:layout_height="30dp"
+          android:layout_weight="1"
+          android:max="50" />
+
+        <TextView
+          android:id="@+id/distance_value"
+          style="@style/TextAppearance.AppCompat.Medium"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center"
+          android:text="12"
+          android:textColor="@color/material_color_white" />
+
+      </LinearLayout>
+
+      <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:textColor="@color/md_white_1000" />
+
+      <TextView
+        android:id="@+id/apply_filter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?selectableItemBackgroundBorderless"
+        android:gravity="center"
+        android:padding="@dimen/material_baseline_grid_1x"
+        android:text="@string/apply_filter"
+        android:textColor="@color/md_white_1000" />
+    </LinearLayout>
+
+    <com.lorentzos.flingswipe.SwipeFlingAdapterView
+      android:id="@+id/itemStack"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="#ffeee9e2"
+      app:rotation_degrees="15.5" />
+
+  </LinearLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

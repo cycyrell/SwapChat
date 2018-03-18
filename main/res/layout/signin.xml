@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bgimage">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/transparentimage">
+
+        <Spinner
+            android:id="@+id/filter_language"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:padding="8dp"
+            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"
+            android:entries="@array/spinner_language" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            tool:visibility="visible">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/logo_puppy_love_2"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="35dp"
+                android:layout_marginTop="20dp"
+                android:background="#0000"
+                android:drawableRight="@drawable/user"
+                android:hint="@string/email"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColor="#ADCCE2"
+                android:textColorHint="#ADCCE2"
+                android:textSize="16dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:background="#ADCCE2" />
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="35dp"
+                android:background="#0000"
+                android:drawableRight="@drawable/pasword"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:maxLength="12"
+                android:padding="16dp"
+                android:textColor="#ADCCE2"
+                android:textColorHint="#ADCCE2"
+                android:textSize="16dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:background="#ADCCE2" />
+
+            <TextView
+                android:id="@+id/terms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/terms_and_conditions"
+                android:textColor="@color/md_blue_500" />
+            <TextView
+                android:id="@+id/forgot_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="16dp"
+                android:text="@string/forgot_password"
+                android:textColor="@color/md_blue_500" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/signin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/rect"
+                android:elevation="@dimen/material_elevation_raised_button_resting"
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/log_in"
+                android:textColor="#fff"
+                android:textSize="16dp"
+                app:elevation="@dimen/material_elevation_raised_button_resting" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/email_button"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/rect"
+                android:elevation="@dimen/material_elevation_raised_button_resting"
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/email"
+                android:textColor="#fff"
+                android:textSize="16dp"
+                app:elevation="@dimen/material_elevation_raised_button_resting" />
+
+            <com.facebook.login.widget.LoginButton
+                android:visibility="gone"
+                android:id="@+id/login_button"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                facebook:com_facebook_login_text="@string/login_fb"
+                android:layout_marginBottom="8dp" />
+
+            <com.shobhitpuri.custombuttons.GoogleSignInButton
+                android:id="@+id/sign_in_button"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:text="@string/common_signin_button_text_long"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/signup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="28dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:background="@drawable/rect"
+                android:elevation="@dimen/material_elevation_raised_button_resting"
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/registration"
+                android:textColor="#fff"
+                android:textSize="16dp"
+                app:elevation="@dimen/material_elevation_raised_button_resting" />
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>
