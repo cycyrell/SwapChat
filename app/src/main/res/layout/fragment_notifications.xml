@@ -1,0 +1,16 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="xyz.teamcatalyst.breedr.notifications.NotificationsActivity$PlaceholderFragment">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/material_baseline_grid_1x"
+        android:paddingRight="@dimen/material_baseline_grid_1x"
+        android:padding="8dp"/>
+
+</RelativeLayout>

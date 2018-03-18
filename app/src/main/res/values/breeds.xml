@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinner_category">
+        <item>Fashion</item>
+        <item>Health and Fitness</item>
+        <item>Electronics</item>
+    </string-array>
+
+    <string-array name="spinner_breed_2">
+        <item>*</item>
+      <item>Fashion</item>
+      <item>Health and Fitness</item>
+      <item>Electronics</item>
+    </string-array>
+
+
+     
+</resources>

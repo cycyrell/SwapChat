@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/material_color_white"
+              android:elevation="8dp"
+              android:orientation="vertical"
+              android:padding="@dimen/material_baseline_grid_1x">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/material_color_white"
+        android:orientation="horizontal"
+        android:padding="@dimen/material_baseline_grid_1x">
+
+        <ImageView
+            android:id="@+id/display_picture"
+            android:src="@drawable/ic_user"
+            android:layout_width="@dimen/material_baseline_grid_8x"
+            android:layout_height="@dimen/material_baseline_grid_8x"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RatingBar
+                android:id="@+id/rating"
+                android:isIndicator="true"
+                style="@style/Base.Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/comment"
+                style="@style/MaterialTypography.Locale.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="10"
+                tools:text="This item is so cool!"/>
+            <TextView
+                android:id="@+id/name"
+                android:textColor="@color/material_color_black"
+                style="@style/MaterialTypography.Dense.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="John Doe"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

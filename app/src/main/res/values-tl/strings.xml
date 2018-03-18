@@ -1,0 +1,135 @@
+<resources>
+    <string name="app_name">SwapChat</string>
+    <string name="title_home">Umpisa</string>
+    <string name="title_dashboard">Mapa</string>
+    <string name="title_notifications">Anunsyo</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in o Rehistro</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">Mali ang email address</string>
+    <string name="error_invalid_password">Ang password ay masyadong maikli</string>
+    <string name="error_incorrect_password">Mali ang password</string>
+    <string name="error_field_required">Kailangan punan ang field na ito</string>
+    <string name="permission_rationale">"Kailangan ng permiso para magamit ang email auto-complete"
+    </string>
+    <string name="title_activity_my_profile">Propayl</string>
+    <string name="large_text">
+
+    </string>
+    <string name="action_settings">Settings</string>
+    <string name="title_dog_list">Mga Kagamitan</string>
+    <string name="title_dog_detail">Detalye</string>
+    <string name="title_asd_list">Mga Kagamitan</string>
+    <string name="title_asd_detail">asd Mga Kagamitan</string>
+    <string name="title_activity_add_dog">Detalye</string>
+
+    <string-array name="spinner_gender">
+        <item>Lalaki</item>
+        <item>Babae</item>
+    </string-array>
+    <string-array name="spinner_age">
+        <item>Year(s)</item>
+        <item>Month(s)</item>
+    </string-array>
+    <string-array name="spinner_language">
+        <item>English</item>
+        <item>Tagalog</item>
+    </string-array>
+    <string-array name="spinner_age_number">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+    </string-array>
+
+    <string name="title_activity_notifications">Anunsyo</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="photo_request_format" translatable="false">https://maps.googleapis.com/maps/api/place/photo?maxwidth=%1$d&amp;photoreference=%2$s&amp;key=%3$s</string>
+
+
+    <string name="facebook_app_id" translatable="false">351901931986139</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb351901931986139</string>
+
+
+    <!-- Verification activity -->
+    <string name="verify">I-verify</string>
+    <string name="face_0">Mukha0:</string>
+    <string name="face_1">Mukha1:</string>
+    <string name="manage_persons">Manage\nPersons</string>
+    <string name="verification_menu">Verification\nMenu</string>
+
+    <!-- Common in all activities -->
+    <string name="progress_dialog_title">Maaari po lamang maghintay</string>
+    <string name="view_log">Tignan ang Transactions</string>
+
+    <!-- Detection activity -->
+    <string name="image">Picture:</string>
+    <string name="select_image">Pumili ng \nPicture</string>
+    <string name="result">Resulta:</string>
+    <string name="detect">Detect</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="email">Ilagay ang email</string>
+    <string name="password">Password</string>
+    <string name="terms_and_conditions">Alituntunin at Kundisyon</string>
+    <string name="forgot_password">Nakalimutan na password?</string>
+    <string name="log_in">LOG IN</string>
+    <string name="registration">Mag-rehistro</string>
+    <string name="add_item">Maglagay ng Gamit</string>
+    <string name="full_name">Buong Pangalan</string>
+    <string name="contact_number">Contact Number</string>
+    <string name="save">i-save</string>
+    <string name="profile_amp_items"><![CDATA[Propayl at mga Gamit]]></string>
+    <string name="trade_matches">Mga bagay na maaaring ipagpalit</string>
+    <string name="notifications">Anunsyo</string>
+    <string name="logout">Logout</string>
+    <string name="distance">Distansya</string>
+    <string name="apply_filter">I-apply ang Filter</string>
+    <string name="account_create">Gumawa ng Account</string>
+    <string name="disclaimer">Hindi kami responsable sa mga bagay na ipinagpalit gamit ang aming serbisyo.</string>
+    <string name="agree">Magpatuloy</string>
+    <string name="disagree">I-cancel</string>
+    <string name="login_failed">Hindi tama ang pag-ka-login. Maling impormasyon. Meron ka pang </string>
+    <string name="login_attempts_left"> natitirang pagkakataon.</string>
+    <string name="reset_password_email_sent">Na send na ang reset password email</string>
+    <string name="profile_saved">Nai-save na ang profile!</string>
+    <string name="dashboard_log_out">Gusto mo nang mag log out?</string>
+    <string name="no_network_connection">Nawalan ng internet koneksyon</string>
+    <string name="enter_comment">Magbigay ng komento para sa bagay:</string>
+    <string name="feedback">Komento</string>
+    <string name="please_select_an_item_to_comment_on">Pumili ng bagay na lalagyan ng komento</string>
+    <string name="cancel">I-cancel</string>
+    <string name="submit">I-submit</string>
+    <string name="view_item_details">Tignan ang detalye</string>
+    <string name="city">Lungsod</string>
+    <string name="item_added">Naidagdag ang bagay</string>
+    <string name="you_liked">Nagustuhan Mo</string>
+    <string name="liked_yours">Nagustuhan Sayo</string>
+    <string name="matched">Nagtugma</string>
+    <string name="swipe_tutorial">Mag swipe sa kaliwa para ma i-skip, Mag swipe sa kanan para i-like</string>
+    <string name="fullname">Buong Pangalan</string>
+    <string name="login_fb">Mag login sa facebook</string>
+    <string name="common_signin_button_text">Mag login sa google</string>
+    <string name="common_signin_button_text_long">Mag login sa google</string>
+    <string name="profanity">Ang pag gamit ng masamang lenguahe ay ipinagbabawal</string>
+    <string name="type_email">Mag-type sa lagayan ng email</string>
+    <string name="last_login">huling pag-login:</string>
+    <string name="face">mukha</string>
+    <string name="item">Gamit</string>
+    <string name="tell_more_about_your_item">mga karagdagang impormasyon</string>
+    <string name="add_an_image_for_item">Magdagdag ng imahe para sa gamit na ito</string>
+    <string name="type_a_message">Mag-type ng mensahe</string>
+    <string name="detected">ang na-detect</string>
+</resources>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "455871580755",
+    "firebase_url": "https://swapchat-529e3.firebaseio.com",
+    "project_id": "swapchat-529e3",
+    "storage_bucket": "swapchat-529e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455871580755:android:9eb93d08e27befdf",
+        "android_client_info": {
+          "package_name": "xyz.teamcatalyst.swapchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "455871580755-3n75bt1b4nmq3v3p22vg169rs9d9ob03.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "xyz.teamcatalyst.swapchat",
+            "certificate_hash": "36d56d74a9c3c39e6dac2eb19be886f288ba7760"
+          }
+        },
+        {
+          "client_id": "455871580755-1070htq7uopsrft0fmn0quufsmm4r5gl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB20-Ny492RQ3FJAt6_NORPV-zMWI91Sus"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "455871580755-1070htq7uopsrft0fmn0quufsmm4r5gl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

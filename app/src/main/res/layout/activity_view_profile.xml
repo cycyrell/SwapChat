@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="xyz.teamcatalyst.breedr.profile.ViewProfileActivity"/>
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        tools:context="xyz.teamcatalyst.breedr.profile.ViewProfileActivity">
+
+        <RelativeLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/material_baseline_grid_2x">
+
+            <ImageView
+                android:id="@+id/user_profile_image"
+                android:layout_width="@dimen/material_increment_2x"
+                android:layout_height="@dimen/material_increment_2x"
+                android:layout_marginRight="@dimen/material_baseline_grid_1x"/>
+
+            <TextView
+                android:id="@+id/user_profile_name"
+                style="@style/MaterialTypography.Regular.Headline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/user_profile_image"
+                android:text="@{vm.userProfile.displayName}"
+                tools:text="John Doe"/>
+
+            <TextView
+                android:id="@+id/user_profile_contact"
+                style="@style/MaterialTypography.Regular.Subheading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_profile_name"
+                android:layout_toRightOf="@id/user_profile_image"
+                android:text="@{vm.userProfile.contactNumber}"
+                tools:text="+639XXXXXXXXX"/>
+
+            <TextView
+                android:id="@+id/user_profile_email"
+                style="@style/MaterialTypography.Regular.Subheading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_profile_contact"
+                android:layout_toRightOf="@id/user_profile_image"
+                android:text="@{vm.userProfile.email}"
+                tools:text="john.doe@sample.com"/>
+
+            <Button
+                android:id="@+id/chat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_profile_image"
+                android:background="@drawable/rect_trans_with_border"
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:onClick="@{v -> vm.onChatClicked()}"
+                android:text="Chat"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/chat"
+                android:layout_marginTop="8dp"
+                android:layout_toLeftOf="@+id/centerHorizontalSpace"
+                android:background="@drawable/rect_trans_with_border"
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:onClick="@{v -> vm.onFeedbackClicked()}"
+                android:text="@string/feedback"/>
+
+            <Space
+                android:id="@+id/centerHorizontalSpace"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/material_increment_1x"
+                android:layout_below="@id/user_profile_image"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="@dimen/material_baseline_grid_1x"
+                android:layout_marginRight="@dimen/material_baseline_grid_1x"/>
+
+            <Button
+                android:id="@+id/matchAction"
+                android:layout_width="match_parent"
+                tools:visibility="visible"
+                android:layout_marginTop="8dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/chat"
+                android:layout_toRightOf="@+id/centerHorizontalSpace"
+                android:background="@drawable/rect_trans_with_border"
+                android:foreground="?selectableItemBackgroundBorderless"
+                android:visibility="gone"
+                android:onClick="@{v -> vm.onMatchActionClicked()}"
+                android:text='@{vm.isMatched ? "Unmatch" : "Like Back"}'/>
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/focusBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/material_color_black_87_percent"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                style="@style/MaterialTypography.Dense.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/material_increment_1x"
+                android:layout_marginTop="@dimen/material_increment_2x"
+                android:gravity="center"
+                android:text="@string/please_select_an_item_to_comment_on"
+                android:textColor="@color/material_color_white"/>
+        </FrameLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/container"
+            android:background="@color/material_color_light_blue_100"
+            android:padding="@dimen/material_baseline_grid_2x"
+            tools:layout_height="120dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/feedbackList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_above="@+id/viewDogProfile"
+            android:layout_below="@+id/recyclerView"/>
+
+        <Button
+            android:id="@+id/viewDogProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/material_baseline_grid_1x"
+            android:background="@drawable/rect_trans_with_border"
+            android:foreground="?selectableItemBackgroundBorderless"
+            android:onClick="@{v -> vm.onViewDogProfileClicked()}"
+            android:text="@string/view_item_details"
+            android:visibility="invisible"/>
+
+    </RelativeLayout>
+</layout>
+
