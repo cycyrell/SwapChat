@@ -133,12 +133,12 @@ public class FaceVerificationActivity extends AppCompatActivity {
     }
 
     // Background task of face detection.
-    private class DetectionTask extends AsyncTask<InputStream, String, Face[]> {
+    public class DetectionTask extends AsyncTask<InputStream, String, Face[]> {
         // Index indicates detecting in which of the two images.
         private int mIndex;
         private boolean mSucceed = true;
 
-        DetectionTask(int index) {
+        public DetectionTask(int index) {
             mIndex = index;
         }
 

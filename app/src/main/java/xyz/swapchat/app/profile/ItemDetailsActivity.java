@@ -210,6 +210,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     "",
                     mEtDogCity.getText().toString(),
                     mEtDogAbout.getText().toString(),
+                    key,
                     itemImageList
             );
             myItems.child(key).setValue(item).addOnCompleteListener(task -> Snackbar.make(view, R.string.item_added, Snackbar.LENGTH_LONG).setAction("OK", view1 -> finish()).show());

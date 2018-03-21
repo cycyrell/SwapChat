@@ -152,12 +152,12 @@ public class NotificationsActivity extends AppCompatActivity {
                     userProfile.setEmail(profile.getEmail());
                     userProfile.setUserId(((NotificationItem) item).key);
 
-                    if (((NotificationItem)item).isLikeBackVisible) {
-                        getActivity().finish();
-                        ViewProfileActivity.start(getContext(), userProfile, false);
-                    } else if (((NotificationItem)item).isMatched) {
+                    if (((NotificationItem)item).isMatched) {
                         getActivity().finish();
                         ViewProfileActivity.start(getContext(), userProfile, true);
+                    } else {
+                        getActivity().finish();
+                        ViewProfileActivity.start(getContext(), userProfile, false);
                     }
                     return true;
                 }

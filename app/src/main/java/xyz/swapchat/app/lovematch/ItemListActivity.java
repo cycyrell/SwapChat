@@ -34,7 +34,10 @@ import co.mobiwise.materialintro.shape.ShapeType;
 import co.mobiwise.materialintro.view.MaterialIntroView;
 import xyz.teamcatalyst.breedr.R;
 import xyz.teamcatalyst.breedr.api.FirebaseApi;
+import xyz.teamcatalyst.breedr.data.History;
 import xyz.teamcatalyst.breedr.data.Item;
+import xyz.teamcatalyst.breedr.data.Profile;
+import xyz.teamcatalyst.breedr.notifications.NotificationItem;
 
 import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
 
@@ -111,7 +114,7 @@ public class ItemListActivity extends AppCompatActivity {
         }
 
         mFilterGender.setSelection(0);
-        setupFlingAdapterView();
+        loadHistory();
     }
 
     @Override
@@ -131,7 +134,28 @@ public class ItemListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupFlingAdapterView() {
+    private void loadHistory() {
+        DatabaseReference historyDbRef = history.child(FirebaseAuth.getInstance().getUid());
+        historyDbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                History history = dataSnapshot.getValue(History.class);
+                if (history == null) {
+                    setupFlingAdapterView(new HashSet<>());
+                    return;
+                }
+                Set<String> youLike = history.youLike != null ? history.youLike.keySet() : new HashSet<>();
+                setupFlingAdapterView(youLike);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                setupFlingAdapterView(new HashSet<>());
+            }
+        });
+    }
+
+    private void setupFlingAdapterView(Set<String> yourLikes) {
 
         items = new ArrayList<>();
         cardsDataAdapter = new CardsDataAdapter(this, items);
@@ -194,6 +218,11 @@ public class ItemListActivity extends AppCompatActivity {
                         continue;
                     for (DataSnapshot snapshot2 : snapshot1.getChildren()) {
                         Item item = snapshot2.getValue(Item.class);
+                        if (item == null) continue;
+                        item.setItemId(snapshot2.getKey());
+                        if (yourLikes.contains(item.getOwnerId())) {
+                            continue;
+                        }
 
                         if (!filterBreed.getSelectedItem().toString().equals("*")) {
                             if (!filterBreed.getSelectedItem().toString().equals(item.getCategory())) {
@@ -282,6 +311,7 @@ public class ItemListActivity extends AppCompatActivity {
 //            Toast.makeText(ItemListActivity.this, "Liked!", Toast.LENGTH_SHORT).show();
             history.child(currentUserId).child("youLike").child(ownerId).setValue(true);
             history.child(ownerId).child("likesYou").child(currentUserId).setValue(true);
+            history.child("itemsYouLike").child(FirebaseApi.getUser().getUid()).child(dataObject.getItemId()).setValue(dataObject);
             history.child(currentUserId).child("likesYou").child(ownerId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -316,6 +346,6 @@ public class ItemListActivity extends AppCompatActivity {
 
     @OnClick(R.id.apply_filter)
     public void onApplyFilterClicked() {
-        setupFlingAdapterView();
+        loadHistory();
     }
 }

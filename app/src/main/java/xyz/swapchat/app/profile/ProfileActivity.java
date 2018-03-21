@@ -1,9 +1,15 @@
 package xyz.teamcatalyst.breedr.profile;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +22,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,9 +35,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.microsoft.projectoxford.face.FaceServiceClient;
+import com.microsoft.projectoxford.face.contract.Face;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +51,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
+import xyz.teamcatalyst.breedr.ExifUtil;
 import xyz.teamcatalyst.breedr.GlideApp;
 import xyz.teamcatalyst.breedr.R;
+import xyz.teamcatalyst.breedr.SwapChat;
 import xyz.teamcatalyst.breedr.auth.ActivitySignin;
+import xyz.teamcatalyst.breedr.auth.FaceVerificationActivity;
 import xyz.teamcatalyst.breedr.data.Item;
 import xyz.teamcatalyst.breedr.data.Profile;
 
@@ -62,6 +80,7 @@ public class ProfileActivity extends AppCompatActivity {
     private StorageReference mStorageRef;
     private String downloadUrl = "";
     private Boolean isForRegistration = false;
+    private ProgressDialog progressDialog;
 
     public static void start(Context context) {
         Intent starter = new Intent(context, ProfileActivity.class);
@@ -80,6 +99,8 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         ButterKnife.bind(this);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(getString(R.string.progress_dialog_title));
         isForRegistration = getIntent().getBooleanExtra("is_register", false);
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -103,7 +124,7 @@ public class ProfileActivity extends AppCompatActivity {
                 mEtUserEmail.setText(profile.getEmail());
                 mEtUserContact.setText(profile.getContactNumber());
                 if (!TextUtils.isEmpty(profile.getProfileUrl())) {
-                    GlideApp.with(ProfileActivity.this).load(profile.getProfileUrl()).centerCrop().into(mIvProfileImage);
+                    GlideApp.with(ProfileActivity.this).load(profile.getProfileUrl()).centerInside().into(mIvProfileImage);
                 }
             }
 
@@ -143,7 +164,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void onSaveClicked() {
         if (isForRegistration && TextUtils.isEmpty(downloadUrl)) {
             new AlertDialog.Builder(this)
-                    .setMessage("Please take a selfie (this will be used for login)")
+                    .setMessage(xyz.teamcatalyst.breedr.R.string.selfie)
                     .setPositiveButton("Ok", (dialogInterface, i) -> {
                         dialogInterface.dismiss();
                     })
@@ -184,7 +205,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     @OnClick(R.id.iv_profile_image)
     public void onProfileImageClicked() {
-        EasyImage.openChooserWithGallery(this, "Upload profile picture", 1);
+        EasyImage.openCamera(this, 1);
     }
 
     @Override
@@ -198,14 +219,10 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onImagePicked(File file, EasyImage.ImageSource imageSource, int type) {
-                Uri uri = Uri.fromFile(file);
-                StorageReference riversRef = mStorageRef.child("images/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/profile.jpg");
-
-                riversRef.putFile(uri)
-                        .addOnSuccessListener(taskSnapshot -> {
-                            downloadUrl = taskSnapshot.getDownloadUrl().toString();
-                            GlideApp.with(ProfileActivity.this).load(downloadUrl).centerCrop().into(mIvProfileImage);
-                        });
+                String imagePath = file.getAbsolutePath();
+                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                Bitmap orientedBitmap = ExifUtil.rotateBitmap(imagePath, bitmap);
+                detect(orientedBitmap, file);
             }
         });
     }
@@ -243,7 +260,11 @@ public class ProfileActivity extends AppCompatActivity {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
             holder.mName.setText(mValues.get(position).getName());
-            GlideApp.with(holder.mView.getContext()).load(holder.mItem.getItemImage()).centerCrop().into(holder.mImage);
+            String image = holder.mItem.getItemImage();
+            if (TextUtils.isEmpty(image)) {
+                image = "https://vignette.wikia.nocookie.net/bokunoheroacademia/images/d/d5/NoPicAvailable.png/revision/latest?cb=20160326222204";
+            }
+            GlideApp.with(holder.mView.getContext()).load(image).centerCrop().into(holder.mImage);
             holder.mView.setOnClickListener(view -> {
                 mListener.onDogClicked(holder.mItem, mKeys.get(position));
             });
@@ -276,5 +297,101 @@ public class ProfileActivity extends AppCompatActivity {
 
     public interface DogListListener {
         void onDogClicked(Item item, String key);
+    }
+
+    // Start detecting in image specified by index.
+    private void detect(Bitmap bitmap, File file) {
+        // Put the image into an input stream for detection.
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(output.toByteArray());
+
+        // Start a background task to detect faces in the image.
+        new DetectionTask(file).execute(inputStream);
+
+    }
+
+    // Background task of face detection.
+    public class DetectionTask extends AsyncTask<InputStream, String, Face[]> {
+        private File file;
+        // Index indicates detecting in which of the two images.
+        private int mIndex;
+        private boolean mSucceed = true;
+
+        public DetectionTask(File file) {
+            this.file = file;
+        }
+
+        @Override
+        protected Face[] doInBackground(InputStream... params) {
+            // Get an instance of face service client to detect faces in image.
+            FaceServiceClient faceServiceClient = SwapChat.getFaceServiceClient();
+            try{
+                publishProgress("Detecting...");
+
+                // Start detection.
+                return faceServiceClient.detect(
+                        params[0],  /* Input stream of image to detect */
+                        true,       /* Whether to return face ID */
+                        false,       /* Whether to return face landmarks */
+                        /* Which face attributes to analyze, currently we support:
+                           age,gender,headPose,smile,facialHair */
+                        null);
+            }  catch (Exception e) {
+                mSucceed = false;
+                publishProgress(e.getMessage());
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onProgressUpdate(String... progress) {
+            progressDialog.setMessage(progress[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Face[] result) {
+            // Show the result on screen when detection is done.
+            setUiAfterDetection(result, file, mSucceed);
+        }
+    }
+
+    private void setUiAfterDetection(Face[] result, File file, boolean mSucceed) {
+
+        if (!mSucceed || (result != null && result.length == 0)) {
+            progressDialog.dismiss();
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.no_face)
+                    .show();
+            return;
+        }
+
+        progressDialog.setMessage("Uploading...");
+        Uri uri = Uri.fromFile(file);
+        StorageReference riversRef = mStorageRef.child("images/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "/profile.jpg");
+
+        riversRef.putFile(uri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    downloadUrl = taskSnapshot.getDownloadUrl().toString();
+                    progressDialog.setMessage("Reloading image...");
+                    GlideApp.with(ProfileActivity.this).load(downloadUrl).listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            progressDialog.dismiss();
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            progressDialog.dismiss();
+                            return false;
+                        }
+                    }).centerInside().into(mIvProfileImage);
+                });
     }
 }

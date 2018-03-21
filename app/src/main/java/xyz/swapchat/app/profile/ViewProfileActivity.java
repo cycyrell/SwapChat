@@ -113,7 +113,10 @@ public class ViewProfileActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     activityViewProfileBinding.viewDogProfile.setVisibility(View.VISIBLE);
-                    activityViewProfileBinding.matchAction.setVisibility(View.VISIBLE);
+                    if (!FirebaseApi.getUser().getUid().equals(userProfile.getUserId())) {
+                        activityViewProfileBinding.matchAction.setVisibility(View.VISIBLE);
+                    }
+
                     fastAdapter.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         fastAdapter.add(new FeedbackItem(snapshot.getValue(UserFeedback.class)));
@@ -151,10 +154,15 @@ public class ViewProfileActivity extends AppCompatActivity {
     public void onMatchActionClicked() {
         if (isMatched) {
             unmatch();
-            activityViewProfileBinding.matchAction.setText("Like Back");
+            if (FirebaseApi.getUser().getUid().equals(selectedItem.getOwnerId())) {
+                activityViewProfileBinding.matchAction.setText("Like Back");
+            }
         } else {
-            likeBack();
+            if (FirebaseApi.getUser().getUid().equals(selectedItem.getOwnerId())) {
+                likeBack();
+            } else {
 
+            }
         }
     }
 
