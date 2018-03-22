@@ -92,7 +92,9 @@ public class ViewProfileActivity extends AppCompatActivity {
                         activityViewProfileBinding.matchAction.setVisibility(View.VISIBLE);
                     }
                     fastAdapter.clear();
+                    int size = 0;
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        size += 1;
                         UserFeedback userFeedback = snapshot.getValue(UserFeedback.class);
                         if (FirebaseApi.getUser().getUid().equals(userFeedback.getUserId())) {
                             myFeedbacksOnItemId.add(item.getName());
@@ -100,6 +102,18 @@ public class ViewProfileActivity extends AppCompatActivity {
                         fastAdapter.add(new FeedbackItem(userFeedback));
                     }
                     if (isSelectingDog) {
+                        if (size > 0) {
+                            AlertDialog dialog = new AlertDialog.Builder(ViewProfileActivity.this)
+                                    .setTitle(R.string.feedback)
+                                    .setMessage(R.string.feedback_taken)
+                                    .setOnDismissListener(dialog12 -> {
+                                        isSelectingDog = false;
+                                        activityViewProfileBinding.focusBackground.setVisibility(View.GONE);
+                                    })
+                                    .create();
+                            dialog.show();
+                            return;
+                        }
                         if (myFeedbacksOnItemId.contains(item.getName())) {
                             AlertDialog dialog = new AlertDialog.Builder(ViewProfileActivity.this)
                                     .setTitle(R.string.feedback)
@@ -133,6 +147,8 @@ public class ViewProfileActivity extends AppCompatActivity {
                                         } else {
                                             ratingDouble = (double) rating.getRating();
                                             DatabaseReference myFeedback = dogFeedback.child(me.getUid());
+                                            isSelectingDog = false;
+                                            activityViewProfileBinding.focusBackground.setVisibility(View.GONE);
                                             myFeedback.setValue(new UserFeedback(feedback, me.getUid(), me.getDisplayName(), ratingDouble, "")).addOnCompleteListener(task -> {
                                                 dialog1.dismiss();
                                             });
