@@ -1,6 +1,7 @@
 package xyz.teamcatalyst.breedr.profile;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -20,7 +21,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import xyz.teamcatalyst.breedr.GlideApp;
 import xyz.teamcatalyst.breedr.R;
@@ -44,6 +47,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     private FastItemAdapter fastAdapter;
     String feedback = "";
     private double ratingDouble;
+    private Set<String> myFeedbacksOnItemId = new HashSet<>();
 
     public static void start(Context context, UserProfile userProfile, boolean isMatched) {
         Intent starter = new Intent(context, ViewProfileActivity.class);
@@ -74,40 +78,11 @@ public class ViewProfileActivity extends AppCompatActivity {
     private void loadDogs() {
         DatabaseReference myDogs = FirebaseApi.getInstance().getDatabase().getReference("user_items").child(userProfile.getUserId());
         activityViewProfileBinding.recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        adapter = new ProfileActivity.DogAdapter(items, keys, (dog, key) -> {
+        adapter = new ProfileActivity.DogAdapter(items, keys, (item, key) -> {
             FirebaseUser me = FirebaseApi.getUser();
-            DatabaseReference dogFeedback = FirebaseApi.getInstance().getDatabase().getReference("feedback").child(dog.getOwnerId() + dog.getName());
-            selectedItem = dog;
+            DatabaseReference dogFeedback = FirebaseApi.getInstance().getDatabase().getReference("feedback").child(item.getOwnerId() + item.getName());
+            selectedItem = item;
             selectedKey = key;
-            if (isSelectingDog) {
-                View view = getLayoutInflater().inflate(R.layout.dialog_feedback, null);
-
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                        .setTitle(R.string.feedback)
-                        .setMessage(R.string.enter_comment)
-                        .setView(view)
-                        .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                        })
-                        .setPositiveButton(R.string.submit, (dialog1, which) -> {
-                            EditText feedbackEt = (EditText) view.findViewById(R.id.feedback);
-                            RatingBar rating = (RatingBar) view.findViewById(R.id.dialog_ratingbar);
-                            feedback = String.valueOf(feedbackEt.getText());
-                            if (feedback.toLowerCase().contains("fuck")) {
-                                feedbackEt.setError(getString(R.string.profanity));
-                            } else {
-                                ratingDouble = (double) rating.getRating();
-                                DatabaseReference myFeedback = dogFeedback.child(me.getUid());
-                                myFeedback.setValue(new UserFeedback(feedback, me.getUid(), me.getDisplayName(), ratingDouble, "")).addOnCompleteListener(task -> {
-                                    activityViewProfileBinding.focusBackground.setVisibility(View.GONE);
-                                    dialog1.dismiss();
-                                });
-                            }
-
-                        })
-                        .create();
-                dialog.show();
-            }
 
             dogFeedback.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -116,10 +91,57 @@ public class ViewProfileActivity extends AppCompatActivity {
                     if (!FirebaseApi.getUser().getUid().equals(userProfile.getUserId())) {
                         activityViewProfileBinding.matchAction.setVisibility(View.VISIBLE);
                     }
-
                     fastAdapter.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        fastAdapter.add(new FeedbackItem(snapshot.getValue(UserFeedback.class)));
+                        UserFeedback userFeedback = snapshot.getValue(UserFeedback.class);
+                        if (FirebaseApi.getUser().getUid().equals(userFeedback.getUserId())) {
+                            myFeedbacksOnItemId.add(item.getName());
+                        }
+                        fastAdapter.add(new FeedbackItem(userFeedback));
+                    }
+                    if (isSelectingDog) {
+                        if (myFeedbacksOnItemId.contains(item.getName())) {
+                            AlertDialog dialog = new AlertDialog.Builder(ViewProfileActivity.this)
+                                    .setTitle(R.string.feedback)
+                                    .setMessage(R.string.feedback_already)
+                                    .setOnDismissListener(dialog12 -> {
+                                        isSelectingDog = false;
+                                        activityViewProfileBinding.focusBackground.setVisibility(View.GONE);
+                                    })
+                                    .create();
+                            dialog.show();
+                        } else {
+                            View view = getLayoutInflater().inflate(R.layout.dialog_feedback, null);
+
+                            AlertDialog dialog = new AlertDialog.Builder(ViewProfileActivity.this)
+                                    .setTitle(R.string.feedback)
+                                    .setMessage(R.string.enter_comment)
+                                    .setView(view)
+                                    .setOnDismissListener(dialog12 -> {
+                                        isSelectingDog = false;
+                                        activityViewProfileBinding.focusBackground.setVisibility(View.GONE);
+                                    })
+                                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
+                                        dialogInterface.dismiss();
+                                    })
+                                    .setPositiveButton(R.string.submit, (dialog1, which) -> {
+                                        EditText feedbackEt = (EditText) view.findViewById(R.id.feedback);
+                                        RatingBar rating = (RatingBar) view.findViewById(R.id.dialog_ratingbar);
+                                        feedback = String.valueOf(feedbackEt.getText());
+                                        if (feedback.toLowerCase().contains("fuck")) {
+                                            feedbackEt.setError(getString(R.string.profanity));
+                                        } else {
+                                            ratingDouble = (double) rating.getRating();
+                                            DatabaseReference myFeedback = dogFeedback.child(me.getUid());
+                                            myFeedback.setValue(new UserFeedback(feedback, me.getUid(), me.getDisplayName(), ratingDouble, "")).addOnCompleteListener(task -> {
+                                                dialog1.dismiss();
+                                            });
+                                        }
+
+                                    })
+                                    .create();
+                            dialog.show();
+                        }
                     }
                 }
 

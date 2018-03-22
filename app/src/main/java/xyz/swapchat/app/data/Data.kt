@@ -17,6 +17,9 @@ class Item(var name: String = "",
            var itemId: String = "",
            var imageList: List<String> = listOf()) : Serializable {
     constructor() : this(itemId = "", name = "Unnamed")
+
+    var disliked = false
+    var lastLiked = 0L
 }
 
 class Profile(var displayName: String = "",

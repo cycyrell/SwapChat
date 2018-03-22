@@ -6,7 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.List;
 
@@ -37,12 +40,19 @@ public class CardsDataAdapter extends ArrayAdapter<Item> {
 
         GlideApp.with(parent.getContext()).load(getItem(position).getItemImage()).fitCenter().into(viewHolder.mImage);
         viewHolder.mName.setText(getItem(position).getName());
+
+//        if (Prefs.getBoolean("dislike" + getItem(position).getItemId(), false)) {
+//            viewHolder.cardLL.setBackgroundResource(R.color.material_color_blue_grey_300);
+//        } else {
+//            viewHolder.cardLL.setBackgroundResource(R.color.white);
+//        }
         return rowView;
     }
 
     static class ViewHolder {
         @BindView(R.id.image) ImageView mImage;
         @BindView(R.id.name) TextView mName;
+        @BindView(R.id.card_ll) LinearLayout cardLL;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);

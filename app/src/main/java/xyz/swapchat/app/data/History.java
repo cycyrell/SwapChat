@@ -7,7 +7,7 @@ import java.util.Map;
  * @createdOn 23/07/2017
  */
 public class History {
-    public Map<String, Boolean> likesYou;
-    public Map<String, Boolean> youLike;
-    public Map<String, Boolean> matched;
+    public Map<String, Long> likesYou;
+    public Map<String, Long> youLike;
+    public Map<String, Long> matched;
 }

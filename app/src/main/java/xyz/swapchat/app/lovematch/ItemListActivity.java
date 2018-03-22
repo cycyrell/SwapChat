@@ -2,6 +2,7 @@ package xyz.teamcatalyst.breedr.lovematch;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,9 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -176,6 +181,7 @@ public class ItemListActivity extends AppCompatActivity {
                 //You also have access to the original object.
                 //If you want to use it just cast it (String) dataObject
 //                Toast.makeText(ItemListActivity.this, "Skipped!", Toast.LENGTH_SHORT).show();
+                dislike((Item) dataObject);
             }
 
             @Override
@@ -230,46 +236,49 @@ public class ItemListActivity extends AppCompatActivity {
                             }
                         }
 
-                        items.add(item);
-                        cardsDataAdapter.notifyDataSetChanged();
-//                        Location location = FirebaseApi.getInstance().getLocation();
-//                        if (location != null) {
-//                            GeoQuery geoQuery = FirebaseApi.getInstance().getGeofire().queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), seekDistance.getProgress());
-//                            geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-//                                @Override
-//                                public void onKeyEntered(String key, GeoLocation location) {
-//                                    withinVicinity.add(key);
-//                                }
-//
-//                                @Override
-//                                public void onKeyExited(String key) {
-//
-//                                }
-//
-//                                @Override
-//                                public void onKeyMoved(String key, GeoLocation location) {
-//
-//                                }
-//
-//                                @Override
-//                                public void onGeoQueryReady() {
-//                                    geoQuery.removeAllListeners();
-//                                    if (withinVicinity.contains(item.getOwnerId())) {
-//                                        items.add(item);
-//                                        cardsDataAdapter.notifyDataSetChanged();
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void onGeoQueryError(DatabaseError error) {
-//
-//                                }
-//                            });
-//                        } else {
-//                            items.add(item);
-//                            cardsDataAdapter.notifyDataSetChanged();
-//                        }
+                        Location location = FirebaseApi.getInstance().getLocation();
+                        if (location != null) {
+                            GeoQuery geoQuery = FirebaseApi.getInstance().getGeofire().queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), seekDistance.getProgress());
+                            geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+                                @Override
+                                public void onKeyEntered(String key, GeoLocation location) {
+                                    withinVicinity.add(key);
+                                }
 
+                                @Override
+                                public void onKeyExited(String key) {
+
+                                }
+
+                                @Override
+                                public void onKeyMoved(String key, GeoLocation location) {
+
+                                }
+
+                                @Override
+                                public void onGeoQueryReady() {
+                                    geoQuery.removeAllListeners();
+                                    if (seekDistance.getProgress() == seekDistance.getMax() || withinVicinity.contains(item.getOwnerId())) {
+                                        if (!Prefs.getBoolean("dislike" + item.getItemId(), false)) {
+                                            items.add(item);
+                                            cardsDataAdapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onGeoQueryError(DatabaseError error) {
+
+                                }
+                            });
+                        } else {
+                            if (seekDistance.getProgress() == seekDistance.getMax() || withinVicinity.contains(item.getOwnerId())) {
+                                if (!Prefs.getBoolean("dislike" + item.getItemId(), false)) {
+                                    items.add(item);
+                                    cardsDataAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
                     }
                 }
                 cardsDataAdapter.notifyDataSetChanged();
@@ -309,15 +318,15 @@ public class ItemListActivity extends AppCompatActivity {
         if (dataObject instanceof Item) {
             String ownerId = ((Item) dataObject).getOwnerId();
 //            Toast.makeText(ItemListActivity.this, "Liked!", Toast.LENGTH_SHORT).show();
-            history.child(currentUserId).child("youLike").child(ownerId).setValue(true);
-            history.child(ownerId).child("likesYou").child(currentUserId).setValue(true);
+            history.child(currentUserId).child("youLike").child(ownerId).setValue(System.currentTimeMillis());
+            history.child(ownerId).child("likesYou").child(currentUserId).setValue(System.currentTimeMillis());
             history.child("itemsYouLike").child(FirebaseApi.getUser().getUid()).child(dataObject.getItemId()).setValue(dataObject);
             history.child(currentUserId).child("likesYou").child(ownerId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getValue() == null) return;
-                    history.child(FirebaseApi.getUser().getUid()).child("matched").child(ownerId).setValue(true);
-                    history.child(ownerId).child("matched").child(FirebaseApi.getUser().getUid()).setValue(true);
+                    history.child(FirebaseApi.getUser().getUid()).child("matched").child(ownerId).setValue(System.currentTimeMillis());
+                    history.child(ownerId).child("matched").child(FirebaseApi.getUser().getUid()).setValue(System.currentTimeMillis());
                     history.child(ownerId).child("likesYou").child(FirebaseApi.getUser().getUid()).setValue(null);
                     history.child(ownerId).child("youLike").child(FirebaseApi.getUser().getUid()).setValue(null);
                     history.child(FirebaseApi.getUser().getUid()).child("likesYou").child(ownerId).setValue(null);
@@ -330,6 +339,10 @@ public class ItemListActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void dislike(Item item) {
+        Prefs.putBoolean("dislike" + item.getItemId(), true);
     }
 
     @Override

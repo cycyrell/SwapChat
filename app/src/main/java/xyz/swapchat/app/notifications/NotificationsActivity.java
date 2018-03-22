@@ -29,7 +29,10 @@ import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import xyz.teamcatalyst.breedr.R;
@@ -134,6 +137,7 @@ public class NotificationsActivity extends AppCompatActivity {
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
             fastAdapter = new FastItemAdapter();
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+            fastAdapter.getItemAdapter().withComparator(new SortByDate());
             recyclerView.setAdapter(fastAdapter);
 //            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 
@@ -207,11 +211,11 @@ public class NotificationsActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         return;
                     }
-                    Set<String> historySet;
+                    Map<String, Long> historySet;
                     boolean isMatched = false;
                     boolean canLikeBack = false;
-                    Set<String> youLike = history.youLike != null ? history.youLike.keySet() : new HashSet<>();
-                    Set<String> likesYou = history.likesYou != null ? history.likesYou.keySet() : new HashSet<>();
+                    Map<String, Long> youLike = history.youLike != null ? history.youLike : new HashMap<>();
+                    Map<String, Long> likesYou = history.likesYou != null ? history.likesYou : new HashMap<>();
                     switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                         case 1:
                             historySet = youLike;
@@ -221,24 +225,24 @@ public class NotificationsActivity extends AppCompatActivity {
                             canLikeBack = true;
                             break;
                         case 3:
-                            historySet = history.matched != null ? history.matched.keySet() : new HashSet<>();
+                            historySet = history.matched != null ? history.matched : new HashMap<>();
                             isMatched = true;
                             break;
-                        default: historySet = new HashSet<>();
+                        default: historySet = new HashMap<>();
                     }
 
                     progressDialog.dismiss();
-                    for (String s : historySet) {
+                    for (Map.Entry<String, Long> stringLongEntry : historySet.entrySet()) {
                         boolean finalIsMatched = isMatched;
                         boolean finalCanLikeBack = canLikeBack;
-                        FirebaseApi.getInstance().getDatabase().getReference("user_profile").child(s)
+                        FirebaseApi.getInstance().getDatabase().getReference("user_profile").child(stringLongEntry.getKey())
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot != null) {
                                             Profile profile = dataSnapshot.getValue(Profile.class);
                                             if (profile == null) return;
-                                            fastAdapter.add(new NotificationItem(s, profile, /*!youLike.contains(s) && */finalCanLikeBack, finalIsMatched));
+                                            fastAdapter.add(new NotificationItem(stringLongEntry, profile, /*!youLike.contains(s) && */finalCanLikeBack, finalIsMatched));
                                         }
                                     }
 
@@ -247,7 +251,6 @@ public class NotificationsActivity extends AppCompatActivity {
                                     }
                                 });
                     }
-
                 }
 
                 @Override

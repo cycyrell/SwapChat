@@ -1,6 +1,7 @@
 package xyz.teamcatalyst.breedr.notifications;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -16,7 +17,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.mikepenz.fastadapter.items.AbstractItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,21 +35,23 @@ import xyz.teamcatalyst.breedr.profile.ProfileActivity;
  * @author A-Ar Andrew Concepcion
  * @createdOn 07/08/2017
  */
-public class NotificationItem extends AbstractItem<NotificationItem, NotificationItem.ViewHolder> {
+public class NotificationItem extends AbstractItem<NotificationItem, NotificationItem.ViewHolder> implements Comparable<NotificationItem> {
 
     public final Profile profile;
     public final boolean isMatched;
     public final boolean isLikeBackVisible;
     public final String key;
+    public final Long value;
 
     private List<Item> items = new ArrayList<>();
     private List<String> keys = new ArrayList<>();
 
-    public NotificationItem(String key, Profile profile, boolean isLikeBackVisible, boolean isMatched) {
+    public NotificationItem(Map.Entry<String, Long> keyVal, Profile profile, boolean isLikeBackVisible, boolean isMatched) {
         this.profile = profile;
         this.isMatched = isMatched;
         this.isLikeBackVisible = isLikeBackVisible;
-        this.key = key;
+        this.key = keyVal.getKey();
+        this.value = keyVal.getValue();
     }
 
     @Override
@@ -97,7 +103,7 @@ public class NotificationItem extends AbstractItem<NotificationItem, Notificatio
             public void onDataChange(DataSnapshot userItemsSnapshot) {
                 items.clear();
                 keys.clear();
-
+                adapter.notifyDataSetChanged();
                 DatabaseReference history = FirebaseApi.getInstance().getDatabase().getReference("history");
 
                 history.child("itemsYouLike").child(FirebaseApi.getUser().getUid())
@@ -110,15 +116,20 @@ public class NotificationItem extends AbstractItem<NotificationItem, Notificatio
                                 }
 
                                 for (DataSnapshot dataSnapshot1 : userItemsSnapshot.getChildren()) {
-                                    Item dog = dataSnapshot1.getValue(Item.class);
-                                    keys.add(dataSnapshot1.getKey());
+                                    Item item = dataSnapshot1.getValue(Item.class);
+                                    item.setItemId(dataSnapshot1.getKey());
                                     if (itemsYouLike.contains(dataSnapshot1.getKey())) {
-                                        items.add(dog);
+                                        if (!keys.contains(item.getItemId())) {
+                                            items.add(item);
+                                        }
                                     }
+                                    keys.add(dataSnapshot1.getKey());
+
                                 }
                                 if (items.isEmpty()) {
                                     viewHolder.recyclerView.setVisibility(View.GONE);
                                 }
+
                                 adapter.notifyDataSetChanged();
                             }
 
@@ -165,6 +176,11 @@ public class NotificationItem extends AbstractItem<NotificationItem, Notificatio
         });
 
         Glide.with(ctx).load(profile.getProfileUrl()).into(viewHolder.mDisplayPicture);
+    }
+
+    @Override
+    public int compareTo(@NonNull NotificationItem o) {
+        return (int) (o.value - this.value);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

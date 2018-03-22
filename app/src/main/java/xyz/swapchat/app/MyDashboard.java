@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.Date;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,7 +73,7 @@ public class MyDashboard extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (!isRequestingLocationUpdates) {
-//            requestLocationUpdates();
+            requestLocationUpdates();
         }
     }
 
@@ -149,6 +150,11 @@ public class MyDashboard extends AppCompatActivity {
                 .setMessage(R.string.dashboard_log_out)
                 .setPositiveButton(R.string.agree, (dialogInterface, i) -> {
                     Prefs.putBoolean("isSameFace", false);
+                    for (Map.Entry<String, ?> stringEntry : Prefs.getAll().entrySet()) {
+                        if (stringEntry.getKey().startsWith("dislike")) {
+                            Prefs.remove(stringEntry.getKey());
+                        }
+                    }
                     dialogInterface.dismiss();
                     FirebaseAuth.getInstance().signOut();
                     finish();
